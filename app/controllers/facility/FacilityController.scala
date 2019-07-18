@@ -29,8 +29,7 @@ class FacilityController @javax.inject.Inject()(
   /**
     * 施設編集ページ
     */
-
-  def edit = Action.async { implicit request =>
+  def edit(facilityId: Long) = Action.async { implicit request =>
     for {
       locSeq      <- daoLocation.filterByIds(Location.Region.IS_PREF_ALL)
       facilitySeq <- facilityDao.findAll
@@ -44,6 +43,13 @@ class FacilityController @javax.inject.Inject()(
     }
   }
 
+  /**
+    * def todoEdit(todoId: Long) = Action { implicit request: MessagesRequest[AnyContent] =>
+    *     todoService.findById(todoId).map { todo =>
+    * Ok(views.html.editForm(todoId, todoForm.fill(todo.name)))
+    * }.getOrElse(NotFound)
+    * }
+    */
 
   /**
     * 施設一覧ページ
