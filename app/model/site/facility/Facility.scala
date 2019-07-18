@@ -13,10 +13,9 @@ import persistence.facility.model.Facility
 
 // 表示: 施設一覧
 //~~~~~~~~~~~~~~~~~~~~~
-case class SiteViewValueFacilityList(
+case class SiteViewValueFacility
+(
   layout:   ViewValuePageLayout,
   location: Seq[Location],
-  facilities: Seq[Facility]
+  facility: Option[Facility]
 )
-
-//

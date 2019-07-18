@@ -13,7 +13,7 @@ import persistence.facility.dao.FacilityDAO
 import persistence.facility.model.Facility.formForFacilitySearch
 import persistence.geo.model.Location
 import persistence.geo.dao.LocationDAO
-import model.site.facility.SiteViewValueFacilityList
+import model.site.facility.{SiteViewValueFacility, SiteViewValueFacilityList}
 import model.component.util.ViewValuePageLayout
 
 
@@ -32,24 +32,17 @@ class FacilityController @javax.inject.Inject()(
   def edit(facilityId: Long) = Action.async { implicit request =>
     for {
       locSeq      <- daoLocation.filterByIds(Location.Region.IS_PREF_ALL)
-      facilitySeq <- facilityDao.findAll
+      facilitySeq <- facilityDao.get(facilityId)
     } yield {
-      val vv = SiteViewValueFacilityList(
+      val vv = SiteViewValueFacility(
         layout     = ViewValuePageLayout(id = request.uri),
         location   = locSeq,
-        facilities = facilitySeq
+        facility = facilitySeq
       )
+      println(facilitySeq)
       Ok(views.html.site.facility.edit.Main(vv, formForFacilitySearch))
     }
   }
-
-  /**
-    * def todoEdit(todoId: Long) = Action { implicit request: MessagesRequest[AnyContent] =>
-    *     todoService.findById(todoId).map { todo =>
-    * Ok(views.html.editForm(todoId, todoForm.fill(todo.name)))
-    * }.getOrElse(NotFound)
-    * }
-    */
 
   /**
     * 施設一覧ページ
