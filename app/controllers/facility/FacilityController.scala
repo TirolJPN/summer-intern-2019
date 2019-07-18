@@ -27,6 +27,25 @@ class FacilityController @javax.inject.Inject()(
   implicit lazy val executionContext = defaultExecutionContext
 
   /**
+    * 施設編集ページ
+    */
+
+  def edit = Action.async { implicit request =>
+    for {
+      locSeq      <- daoLocation.filterByIds(Location.Region.IS_PREF_ALL)
+      facilitySeq <- facilityDao.findAll
+    } yield {
+      val vv = SiteViewValueFacilityList(
+        layout     = ViewValuePageLayout(id = request.uri),
+        location   = locSeq,
+        facilities = facilitySeq
+      )
+      Ok(views.html.site.facility.edit.Main(vv, formForFacilitySearch))
+    }
+  }
+
+
+  /**
     * 施設一覧ページ
     */
   def list = Action.async { implicit request =>
