@@ -39,7 +39,7 @@ class FacilityController @javax.inject.Inject()(
         location   = locSeq,
         facility = facilitySeq
       )
-      println(facilitySeq)
+//      println(facilitySeq)
       Ok(views.html.site.facility.edit.Main(vv, formForFacilitySearch))
     }
   }
