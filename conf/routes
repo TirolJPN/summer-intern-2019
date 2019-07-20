@@ -11,7 +11,8 @@ POST  /app/new-user                     controllers.app.NewUserCommitController.
 # --[ 施設ページ ]----------------------------------------------------------------
 GET  /facility/list                    controllers.facility.FacilityController.list
 GET  /facility/search                  controllers.facility.FacilityController.search
-# 課題用に追加
+
+# 課題用に追加するアクション
 # facilityの編集を行うアクション
 GET  /facility/edit/:facilityId        controllers.facility.FacilityController.edit(facilityId:Long)
 #POST /facility/:facilityId             controllers.facility.FacilityController.update(facilityId:Long)
