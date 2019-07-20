@@ -24,10 +24,14 @@
       <div class="form__section pref inline">
       @helper.select(
           field   = form("locationId"),
-          options = vv.location.map(v => (v.id, v.namePref)),
+          options = vv.location.map(
+              v => (v.id,
+                    v.namePref
+              )
+          ),
           '_label           -> "都道府県",
           '_default         -> "未選択",
-          '_showConstraints -> false
+          '_showConstraints -> false,
       )
       </div>
       @helper.inputText(form("name"), '_label -> "名前")

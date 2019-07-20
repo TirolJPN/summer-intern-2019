@@ -12,11 +12,11 @@ import play.api.mvc.{AbstractController, AnyContent, MessagesControllerComponent
 import persistence.facility.dao.FacilityDAO
 import persistence.facility.model.Facility.formForFacilitySearch
 import persistence.facility.model.Facility.formForFacilityEdit
+import persistence.facility.model.{Facility, FacilityEdit}
 import persistence.geo.model.Location
 import persistence.geo.dao.LocationDAO
 import model.site.facility.{SiteViewValueFacility, SiteViewValueFacilityList}
 import model.component.util.ViewValuePageLayout
-
 import play.api.data._
 import play.api.data.Forms._
 
@@ -53,14 +53,24 @@ class FacilityController @javax.inject.Inject()(
   def edit(facilityId: Long) = Action.async { implicit request =>
     for {
       locSeq      <- daoLocation.filterByIds(Location.Region.IS_PREF_ALL)
-      facilitySeq <- facilityDao.get(facilityId)
+      facility <- facilityDao.get(facilityId)
     } yield {
       val vv = SiteViewValueFacility(
         layout     = ViewValuePageLayout(id = request.uri),
         location   = locSeq,
-        facility = facilitySeq
+        facility = facility
       )
-      Ok(views.html.site.facility.edit.Main(vv, facilityId , formForFacilityEdit))
+
+      Ok(views.html.site.facility.edit.Main(vv, facilityId ,
+        formForFacilityEdit.fill(
+          FacilityEdit(
+            Option(facility.get.locationId),
+            Option(facility.get.name),
+            Option(facility.get.address),
+            Option(facility.get.description)
+          )
+        )
+      ))
     }
   }
 

@@ -30,11 +30,12 @@ case class FacilitySearch(
 )
 
 case class FacilityEdit(
-  locationId: Option[Long],
+  locationId: Option[Location.Id],
   name: Option[String],
   address: Option[String],
   description: Option[String]
 )
+
 
 // コンパニオンオブジェクト
 //~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -44,9 +45,10 @@ object Facility {
   type Id = Long
 
   // --[ フォーム定義 ]---------------------------------------------------------
+
   val formForFacilityEdit = Form(
     mapping(
-      "locationId" -> optional(longNumber),
+      "locationId" -> optional(text),
       "name" -> optional(text),
       "address"-> optional(text),
       "description"-> optional(text)
