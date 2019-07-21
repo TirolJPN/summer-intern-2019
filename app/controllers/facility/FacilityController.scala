@@ -17,8 +17,6 @@ import persistence.geo.model.Location
 import persistence.geo.dao.LocationDAO
 import model.site.facility.{SiteViewValueFacility, SiteViewValueFacilityList}
 import model.component.util.ViewValuePageLayout
-import play.api.data._
-import play.api.data.Forms._
 
 
 // 施設
@@ -33,22 +31,6 @@ class FacilityController @javax.inject.Inject()(
   /**
     * 施設編集ページ
     */
-
-  // Web上のフォームの各の属性値をController側で決めてる？
-//  val todoForm: Form[String] = Form(
-//    "name" -> nonEmptyText
-//  )
-  /*
-   *     /* @2 */ def locationId    = column[Location.Id]    ("location_id")
-         /* @3 */ def name          = column[String]         ("name")
-         /* @4 */ def address       = column[String]         ("address")
-         /* @5 */ def description   = column[String]         ("description")
-   */
-
-  //  新しいTodoを追加するフォームがあるページを作成するAction?
-  //  def todoNew = Action { implicit  request: MessagesRequest[AnyContent] =>
-  //    Ok(views.html.createForm(todoForm))
-  //  }
 
   def edit(facilityId: Long) = Action.async { implicit request =>
     for {
@@ -72,6 +54,12 @@ class FacilityController @javax.inject.Inject()(
         )
       ))
     }
+  }
+
+  def update(facilityId: Long) = Action { implicit request =>
+    val t = formForFacilityEdit.bindFromRequest.get
+    facilityDao.updateFacility(facilityId, t)
+    Redirect(routes.FacilityController.list())
   }
 
   /**

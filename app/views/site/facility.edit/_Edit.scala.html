@@ -20,7 +20,7 @@
 
 
   <div class="content__section form">
-  @helper.form(action = controllers.facility.routes.FacilityController.edit(facilityId)) {
+  @helper.form(action = controllers.facility.routes.FacilityController.update(facilityId)) {
       <div class="form__section pref inline">
       @helper.select(
           field   = form("locationId"),
@@ -37,8 +37,9 @@
       @helper.inputText(form("name"), '_label -> "名前")
       @helper.inputText(form("address"), '_label -> "住所")
       @helper.inputText(form("description"), '_label -> "備考")
-      }
+
       <input type="submit" value="更新">
+      }
   </div>
 
 }
