@@ -9,13 +9,13 @@
 @import play.api.data.Form
 
 @import persistence.facility.model.FacilityEdit
-@(vv: SiteViewValueFacility, facilityId:Long, form: Form[FacilityEdit])(implicit messages: play.api.i18n.Messages)
+@(form: Form[FacilityEdit])(implicit messages: play.api.i18n.Messages)
 
 @** 施設検索一覧 *@
 @views.html.common.layout.InnerContent("site-app-new-user-form", "content") {
   @** --[ 見出し ]---------------------------------------------------------- *@
   <h3 class="content__section header">
-    <span class="header__title">新規施設追加</span>
+    <span class="header__title">施設情報編集</span>
   </h3>
 
 

@@ -11,12 +11,13 @@ import play.api.i18n.I18nSupport
 import play.api.mvc.{AbstractController, AnyContent, MessagesControllerComponents, MessagesRequest}
 import persistence.facility.dao.FacilityDAO
 import persistence.facility.model.Facility.formForFacilitySearch
-import persistence.facility.model.Facility.formForFacilityEdit
+import persistence.facility.model.Facility.formForFacility
 import persistence.facility.model.{Facility, FacilityEdit}
 import persistence.geo.model.Location
 import persistence.geo.dao.LocationDAO
 import model.site.facility.{SiteViewValueFacility, SiteViewValueFacilityList}
 import model.component.util.ViewValuePageLayout
+import views.html.site.facility.`new`.Main
 
 
 // 施設
@@ -44,7 +45,7 @@ class FacilityController @javax.inject.Inject()(
       )
 
       Ok(views.html.site.facility.edit.Main(vv, facilityId ,
-        formForFacilityEdit.fill(
+        formForFacility.fill(
           FacilityEdit(
             Option(facility.get.locationId),
             Option(facility.get.name),
@@ -57,10 +58,26 @@ class FacilityController @javax.inject.Inject()(
   }
 
   def update(facilityId: Long) = Action { implicit request =>
-    val t = formForFacilityEdit.bindFromRequest.get
-    facilityDao.updateFacility(facilityId, t)
+    val formValues = formForFacility.bindFromRequest.get
+    facilityDao.updateFacility(facilityId, formValues)
     Redirect(routes.FacilityController.list())
   }
+
+
+  def new = Action.async { implicit request =>
+    for {
+      locSeq      <- daoLocation.filterByIds(Location.Region.IS_PREF_ALL)
+      facility <- None
+    } yield {
+      val vv = SiteViewValueFacility(
+        layout     = ViewValuePageLayout(id = request.uri),
+        location   = locSeq,
+        facility = facility
+      )
+      Ok(views.html.site.facility.new.Main(formForFacility))
+  }
+
+
 
   /**
     * 施設一覧ページ

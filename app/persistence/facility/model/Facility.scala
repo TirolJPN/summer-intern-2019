@@ -46,7 +46,7 @@ object Facility {
 
   // --[ フォーム定義 ]---------------------------------------------------------
 
-  val formForFacilityEdit = Form(
+  val formForFacility = Form(
     mapping(
       "locationId" -> optional(text),
       "name" -> optional(text),

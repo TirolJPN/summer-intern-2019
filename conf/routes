@@ -18,6 +18,10 @@ GET  /facility/edit/:facilityId        controllers.facility.FacilityController.e
 # 上記 /facility/edit/:facilityId でsubmitされたバリデーション済みの値を取ってきて、modelの更新を行う
 POST /facility/:facilityId             controllers.facility.FacilityController.update(facilityId:Long)
 
+# facilityを新規に追加するビューに遷移するアクション
+GET  /facility/new                     controllers.facility.FacilityController.new
+# POST /facility
+
 # --[ 特集ページ ]--------------------------------------------------------------
 GET  /recruit/intership-for-summer-21  controllers.recruit.InternshipForSummer21Controller.view
 
