@@ -17,7 +17,6 @@ import persistence.geo.model.Location
 import persistence.geo.dao.LocationDAO
 import model.site.facility.{SiteViewValueFacility, SiteViewValueFacilityList}
 import model.component.util.ViewValuePageLayout
-import views.html.site.facility.`new`.Main
 
 
 // 施設
@@ -57,24 +56,35 @@ class FacilityController @javax.inject.Inject()(
     }
   }
 
+  // 新規Facilityの追加
+
+
+  // Facilityの更新
   def update(facilityId: Long) = Action { implicit request =>
     val formValues = formForFacility.bindFromRequest.get
-    facilityDao.updateFacility(facilityId, formValues)
+    facilityDao.update(facilityId, formValues)
     Redirect(routes.FacilityController.list())
   }
 
 
-  def new = Action.async { implicit request =>
+  def add = Action.async { implicit request =>
     for {
-      locSeq      <- daoLocation.filterByIds(Location.Region.IS_PREF_ALL)
-      facility <- None
+      locSeq <- daoLocation.filterByIds(Location.Region.IS_PREF_ALL)
+      facility <- scala.concurrent.Future(None)
     } yield {
       val vv = SiteViewValueFacility(
-        layout     = ViewValuePageLayout(id = request.uri),
-        location   = locSeq,
-        facility = facility
+        layout = ViewValuePageLayout(id = request.uri),
+        location = locSeq,
+        facility = facility,
       )
-      Ok(views.html.site.facility.new.Main(formForFacility))
+      Ok(views.html.site.facility.add.Main(vv, formForFacility))
+    }
+  }
+
+  def insert = Action { implicit request =>
+    val formValues = formForFacility.bindFromRequest.get
+    facilityDao.insert(formValues)
+    Redirect(routes.FacilityController.list())
   }
 
 

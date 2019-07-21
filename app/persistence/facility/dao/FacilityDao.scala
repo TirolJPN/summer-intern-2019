@@ -8,8 +8,10 @@
 package persistence.facility.dao
 
 import java.time.LocalDateTime
-import scala.concurrent.Future
 
+import persistence.facility.model
+
+import scala.concurrent.Future
 import slick.jdbc.JdbcProfile
 import play.api.db.slick.DatabaseConfigProvider
 import play.api.db.slick.HasDatabaseConfigProvider
@@ -57,13 +59,24 @@ class FacilityDAO @javax.inject.Inject()(
         .result
     }
 
-  def updateFacility (facilityId:Long, formValues: FacilityEdit) =
+  def update (facilityId:Long, formValues: FacilityEdit) =
     db.run {
       slick
         .filter(_.id === facilityId)
         .map(p => (p.locationId, p.name, p.address, p.description))
         .update((formValues.locationId.get, formValues.name.get, formValues.address.get, formValues.description.get))
     }
+
+  def insert(data: Facility): Future[Facility.Id] =
+    db.run {
+      data.id match {
+        case None    => slick returning slick.map(_.id) += data
+        case Some(_) => DBIO.failed(
+          new IllegalArgumentException("The given object is already assigned id.")
+        )
+      }
+    }
+
 
   // --[ テーブル定義 ] --------------------------------------------------------
   class FacilityTable(tag: Tag) extends Table[Facility](tag, "facility") {

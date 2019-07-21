@@ -19,8 +19,8 @@ GET  /facility/edit/:facilityId        controllers.facility.FacilityController.e
 POST /facility/:facilityId             controllers.facility.FacilityController.update(facilityId:Long)
 
 # facilityを新規に追加するビューに遷移するアクション
-GET  /facility/new                     controllers.facility.FacilityController.new
-# POST /facility
+GET  /facility/add                     controllers.facility.FacilityController.add
+POST /facility                         controllers.facility.FacilityController.insert
 
 # --[ 特集ページ ]--------------------------------------------------------------
 GET  /recruit/intership-for-summer-21  controllers.recruit.InternshipForSummer21Controller.view

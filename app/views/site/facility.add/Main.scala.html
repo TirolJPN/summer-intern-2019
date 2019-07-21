@@ -9,7 +9,7 @@
 
 @** 施設一覧/検索 *@
 @import persistence.facility.model.FacilityEdit
-@(vv: SiteViewValueFacility, facilityId:Long, form: Form[FacilityEdit])(implicit messages: play.api.i18n.Messages)
+@(vv: SiteViewValueFacility, form: Form[FacilityEdit])(implicit messages: play.api.i18n.Messages)
 @views.html.common.layout.Default(vv.layout) {
   @views.html.common.layout.ContentLayout(
     id      = "site-facility-list",
@@ -19,5 +19,5 @@
 
 @** テンプレート: コンテンツ *@
 @tplContent = {
-  @views.html.site.facility.edit._Edit(vv, facilityId, form)
+  @views.html.site.facility.add._Add(vv, form)
 }
