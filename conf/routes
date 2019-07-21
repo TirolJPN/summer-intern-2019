@@ -12,6 +12,12 @@ POST  /app/new-user                     controllers.app.NewUserCommitController.
 GET  /facility/list                    controllers.facility.FacilityController.list
 GET  /facility/search                  controllers.facility.FacilityController.search
 
+# 課題用に追加するアクション
+# facilityの編集を行うアクション
+GET  /facility/edit/:facilityId        controllers.facility.FacilityController.edit(facilityId:Long)
+# 上記 /facility/edit/:facilityId でsubmitされたバリデーション済みの値を取ってきて、modelの更新を行う
+POST /facility/:facilityId             controllers.facility.FacilityController.update(facilityId:Long)
+
 # --[ 特集ページ ]--------------------------------------------------------------
 GET  /recruit/intership-for-summer-21  controllers.recruit.InternshipForSummer21Controller.view
 

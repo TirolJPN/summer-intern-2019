@@ -8,12 +8,14 @@
 package controllers.facility
 
 import play.api.i18n.I18nSupport
-import play.api.mvc.{AbstractController, MessagesControllerComponents}
+import play.api.mvc.{AbstractController, AnyContent, MessagesControllerComponents, MessagesRequest}
 import persistence.facility.dao.FacilityDAO
 import persistence.facility.model.Facility.formForFacilitySearch
+import persistence.facility.model.Facility.formForFacilityEdit
+import persistence.facility.model.{Facility, FacilityEdit}
 import persistence.geo.model.Location
 import persistence.geo.dao.LocationDAO
-import model.site.facility.SiteViewValueFacilityList
+import model.site.facility.{SiteViewValueFacility, SiteViewValueFacilityList}
 import model.component.util.ViewValuePageLayout
 
 
@@ -25,6 +27,40 @@ class FacilityController @javax.inject.Inject()(
   cc: MessagesControllerComponents
 ) extends AbstractController(cc) with I18nSupport {
   implicit lazy val executionContext = defaultExecutionContext
+
+  /**
+    * 施設編集ページ
+    */
+
+  def edit(facilityId: Long) = Action.async { implicit request =>
+    for {
+      locSeq      <- daoLocation.filterByIds(Location.Region.IS_PREF_ALL)
+      facility <- facilityDao.get(facilityId)
+    } yield {
+      val vv = SiteViewValueFacility(
+        layout     = ViewValuePageLayout(id = request.uri),
+        location   = locSeq,
+        facility = facility
+      )
+
+      Ok(views.html.site.facility.edit.Main(vv, facilityId ,
+        formForFacilityEdit.fill(
+          FacilityEdit(
+            Option(facility.get.locationId),
+            Option(facility.get.name),
+            Option(facility.get.address),
+            Option(facility.get.description)
+          )
+        )
+      ))
+    }
+  }
+
+  def update(facilityId: Long) = Action { implicit request =>
+    val t = formForFacilityEdit.bindFromRequest.get
+    facilityDao.updateFacility(facilityId, t)
+    Redirect(routes.FacilityController.list())
+  }
 
   /**
     * 施設一覧ページ
