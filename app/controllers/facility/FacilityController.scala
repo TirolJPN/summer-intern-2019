@@ -82,8 +82,25 @@ class FacilityController @javax.inject.Inject()(
   }
 
   def insert = Action { implicit request =>
-    val formValues = formForFacility.bindFromRequest.get
-    facilityDao.insert(formValues)
+    formForFacility.bindFromRequest.fold(
+      errors => {
+        for {
+          locSeq <- daoLocation.filterByIds(Location.Region.IS_PREF_ALL)
+        } yield {
+//          BadRequest(views.html.site.app.new_user.Main(vv, errors))
+          Redirect(routes.FacilityController.list())
+        }
+      },
+      facility   => {
+        for {
+          _ <- facilityDao.insert(facility)
+        } yield {
+          // TODO: セッション追加処理
+          Redirect("/recruit/intership-for-summer-21")
+        }
+      }
+    )
+    // facilityDao.insert(formValues)
     Redirect(routes.FacilityController.list())
   }
 
