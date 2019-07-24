@@ -81,6 +81,13 @@ class FacilityDAO @javax.inject.Inject()(
     }
   }
 
+  def delete (facilityId:Long) =
+    db.run {
+      slick
+        .filter(_.id === facilityId)
+        .delete
+    }
+
 
   // --[ テーブル定義 ] --------------------------------------------------------
   class FacilityTable(tag: Tag) extends Table[Facility](tag, "facility") {

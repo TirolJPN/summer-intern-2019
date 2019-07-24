@@ -104,6 +104,11 @@ class FacilityController @javax.inject.Inject()(
     Redirect(routes.FacilityController.list())
   }
 
+  def delete(facilityId: Long) = Action { implicit request =>
+    facilityDao.delete(facilityId)
+    Redirect(routes.FacilityController.list())
+  }
+
 
 
   /**
