@@ -42,6 +42,19 @@
     }
   </div>
 
+  @** --[ Facility新規追加ボタン ]---------------------------------------------------------- *@
+  <div class="content__section form">
+  @helper.form(action = controllers.facility.routes.FacilityController.add) {
+
+    @** 登録ボタン *@
+    <div class="form__section submit inline">
+      <button class="button" type="submit">
+        <span class="submit__text">新規追加</span>
+      </button>
+    </div>
+  }
+  </div>
+
   @** --[ 一覧 ]-------------------------------------------------------- *@
   <div class="content__section content">
     @for(facility <- vv.facilities) {

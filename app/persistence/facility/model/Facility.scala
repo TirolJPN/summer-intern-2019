@@ -10,7 +10,10 @@ package persistence.facility.model
 import play.api.data._
 import play.api.data.Forms._
 import java.time.LocalDateTime
+
 import persistence.geo.model.Location
+
+
 
 // 施設情報 (sample)
 //~~~~~~~~~~~~~
@@ -45,8 +48,7 @@ object Facility {
   type Id = Long
 
   // --[ フォーム定義 ]---------------------------------------------------------
-
-  val formForFacilityEdit = Form(
+  val formForFacility = Form(
     mapping(
       "locationId" -> optional(text),
       "name" -> optional(text),
@@ -54,6 +56,24 @@ object Facility {
       "description"-> optional(text)
     )(FacilityEdit.apply)(FacilityEdit.unapply)
   )
+
+  /*
+  val formForFacility = Form(
+    mapping(
+      "locationId" -> optional(text),
+      "name" ->nonEmptyText,
+      "address"-> nonEmptyText,
+      "description"-> nonEmptyText
+    )
+    (FacilityEdit.apply)(FacilityEdit.unapply)
+  )
+
+  (Function.untupled(
+    t => Facility(None, Location(t._1, _) , t._2, t._3, t._4)
+  ))(Facility.unapply(_).map(
+    t => (t._1, t._2, t._3, t._4)
+  ))
+  */
 
   val formForFacilitySearch = Form(
     mapping(

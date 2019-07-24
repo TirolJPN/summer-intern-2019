@@ -127,6 +127,7 @@ object Location {
     def findLocationIds(region: Region): Seq[Location.Id] = {
       map.collect({ case v if v._1 == region => v._2 }).flatten
     }
+
   }
 
 }
