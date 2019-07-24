@@ -67,15 +67,19 @@ class FacilityDAO @javax.inject.Inject()(
         .update((formValues.locationId.get, formValues.name.get, formValues.address.get, formValues.description.get))
     }
 
-  def insert(data: Facility): Future[Facility.Id] =
+  def insert(Recvdata: FacilityEdit): Future[Facility.Id] = {
+    val countRecord = slick.length
+    val insertData: Facility = Facility(None, Recvdata.locationId.get, Recvdata.name.get,  Recvdata.address.get,  Recvdata.description.get)
     db.run {
-      data.id match {
-        case None    => slick returning slick.map(_.id) += data
-        case Some(_) => DBIO.failed(
-          new IllegalArgumentException("The given object is already assigned id.")
-        )
-      }
+      //      data.id match {
+      //        case None    => slick returning slick.map(_.id) += data
+      //        case Some(_) => DBIO.failed(
+      //          new IllegalArgumentException("The given object is already assigned id.")
+      //        )
+      //      }
+      slick returning slick.map(_.id) += insertData
     }
+  }
 
 
   // --[ テーブル定義 ] --------------------------------------------------------
