@@ -47,7 +47,12 @@ class OrganizationDao @javax.inject.Inject() (
      db.run {
        slick
          .filter(_.id === organizationId)
-         .map
+         .map( p => (p.locationId, p.chineseName, p.phoneticName, p.englishName))
+         .update(formValues.locationId.get,
+           formValues.chineseName.get,
+           formValues.phoneticName.get,
+           formValues.englishName.get,
+         )
      }
 
   class OrganizationTable(tag: Tag) extends Table[Organization](tag, "organization") {
