@@ -55,6 +55,8 @@ class OrganizationDao @javax.inject.Inject() (
          )
      }
 
+  def insert
+
   class OrganizationTable(tag: Tag) extends Table[Organization](tag, "organization") {
 
 
