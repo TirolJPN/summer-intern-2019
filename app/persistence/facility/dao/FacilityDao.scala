@@ -68,7 +68,6 @@ class FacilityDAO @javax.inject.Inject()(
     }
 
   def insert(Recvdata: FacilityEdit): Future[Facility.Id] = {
-    val countRecord = slick.length
     val insertData: Facility = Facility(None, Recvdata.locationId.get, Recvdata.name.get,  Recvdata.address.get,  Recvdata.description.get)
     db.run {
       //      data.id match {

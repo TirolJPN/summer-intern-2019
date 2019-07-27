@@ -10,7 +10,7 @@ import slick.jdbc.JdbcProfile
 import play.api.db.slick.DatabaseConfigProvider
 import play.api.db.slick.HasDatabaseConfigProvider
 import persistence.organization.model.{Organization, OrganizationEdit}
-
+import persistence.organization.model.OrganizationEdit
 
 class OrganizationDao @javax.inject.Inject() (
   val dbConfigProvider: DatabaseConfigProvider
@@ -55,7 +55,25 @@ class OrganizationDao @javax.inject.Inject() (
          )
      }
 
-  def insert
+  def insert (RecvData: OrganizationEdit): Future[Organization.Id] = {
+    val insertData : Organization = Organization(
+        None,
+        RecvData.locationId.get,
+        RecvData.chineseName.get,
+        RecvData.phoneticName.get,
+        RecvData.englishName.get,
+    )
+    db.run {
+      slick returning slick.map(_.id) += insertData
+    }
+  }
+
+  def delete (organizationId: Long) =
+    db.run {
+      slick
+        .filter(_.id === organizationId)
+        .delete
+    }
 
   class OrganizationTable(tag: Tag) extends Table[Organization](tag, "organization") {
 

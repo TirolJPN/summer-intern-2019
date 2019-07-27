@@ -22,6 +22,8 @@ case class Organization (
   chineseName:      String,                     // 名前(漢字)
   phoneticName:     String,                     // 名前(ふりがな)
   englishName:      String,                     // 名前(英語名)
+  updatedAt:   LocalDateTime = LocalDateTime.now,  // データ更新日
+  createdAt:   LocalDateTime = LocalDateTime.now   // データ作成日
                         )
 
 case class OrganizationFacilities (
