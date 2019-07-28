@@ -21,6 +21,7 @@ POST /facility/delete/:facilityId        controllers.facility.FacilityController
 GET  /organization/list                   controllers.organization.OrganizationController.list
 GET  /organization/add                    controllers.organization.OrganizationController.add
 POST /organization                        controllers.organization.OrganizationController.insert
+GET  /organization/detail/:organizationId controllers.organization.OrganizationController.detail(organizationId:Long)
 GET  /organization/edit/:organizationId   controllers.organization.OrganizationController.edit(organizationId:Long)
 POST /organization/:organizationId        controllers.organization.OrganizationController.update(organizationId:Long)
 POST /organization/delete/:organizationId controllers.organization.OrganizationController.delete(organizationId:Long)
