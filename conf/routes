@@ -23,6 +23,7 @@ POST /facility                         controllers.facility.FacilityController.i
 POST /facility/delete/:facilityId      controllers.facility.FacilityController.delete(facilityId:Long)
 
 # --[ 組織ページ ]----------------------------------------------------------------
+GET  /organization/list                controllers.organization.OrganizationController.list
 GET  /organization/add                 controllers.organization.OrganizationController.add
 POST /organization                     controllers.organization.OrganizationController.insert
 

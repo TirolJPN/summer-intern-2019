@@ -8,7 +8,7 @@ import persistence.organization.model.OrganizationEdit
 import persistence.organization.model.Organization.formForOrganization
 import persistence.geo.model.Location
 import persistence.geo.dao.LocationDAO
-import model.site.organization.SiteViewValueOrganization
+import model.site.organization.{SiteViewValueOrganization, SiteViewValueOrganizationList}
 import model.component.util.ViewValuePageLayout
 
 class OrganizationController @javax.inject.Inject()(
@@ -17,6 +17,23 @@ class OrganizationController @javax.inject.Inject()(
   cc: MessagesControllerComponents
 ) extends AbstractController(cc) with I18nSupport {
   implicit lazy val executionContext = defaultExecutionContext
+
+  /**
+    * 組織一覧ページ
+    */
+  def list = Action.async { implicit request =>
+    for {
+      locSeq <- daoLocation.filterByIds(Location.Region.IS_PREF_ALL)
+      organizationSeq <- organizationDao.findAll
+    } yield {
+      val vv = SiteViewValueOrganizationList(
+        layout = ViewValuePageLayout(id = request.uri),
+        location = locSeq,
+        organizations = organizationSeq
+      )
+      Ok(views.html.site.organization.list.Main(vv))
+    }
+  }
 
   /**
     * 組織追加ページ
@@ -42,7 +59,7 @@ class OrganizationController @javax.inject.Inject()(
           locSeq <- daoLocation.filterByIds(Location.Region.IS_PREF_ALL)
         } yield {
           //          BadRequest(views.html.site.app.new_user.Main(vv, errors))
-          Redirect("/recruit/intership-for-summer-21")
+          Redirect(routes.OrganizationController.list())
         }
       },
       organization   => {
@@ -54,6 +71,6 @@ class OrganizationController @javax.inject.Inject()(
         }
       }
     )
-    Redirect("/recruit/intership-for-summer-21")
+    Redirect(routes.OrganizationController.list())
   }
 }

@@ -82,9 +82,9 @@ class OrganizationDao @javax.inject.Inject() (
     // Table's columns
     /* @1 */ def id            = column[Facility.Id]    ("id", O.PrimaryKey, O.AutoInc)
     /* @2 */ def locationId    = column[Location.Id]    ("location_id")
-    /* @3 */ def chineseName          = column[String]         ("chineseName")
-    /* @4 */ def phoneticName       = column[String]         ("phoneticName")
-    /* @5 */ def englishName   = column[String]         ("englishName")
+    /* @3 */ def chineseName          = column[String]         ("chinese_name")
+    /* @4 */ def phoneticName       = column[String]         ("phonetic_name")
+    /* @5 */ def englishName   = column[String]         ("english_name")
     /* @6 */ def updatedAt     = column[LocalDateTime]  ("updated_at")
     /* @7 */ def createdAt     = column[LocalDateTime]  ("created_at")
 
