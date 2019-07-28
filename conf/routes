@@ -3,27 +3,27 @@
 # ~~~~
 
 # --[ 登録処理 ]----------------------------------------------------------------
-GET   /app/new-user                     controllers.app.NewUserController.viewForApp
-POST  /app/new-user                     controllers.app.NewUserCommitController.application
+GET   /app/new-user                      controllers.app.NewUserController.viewForApp
+POST  /app/new-user                      controllers.app.NewUserCommitController.application
 
 
 
 # --[ 施設ページ ]----------------------------------------------------------------
-GET  /facility/list                    controllers.facility.FacilityController.list
-GET  /facility/search                  controllers.facility.FacilityController.search
+GET  /facility/list                      controllers.facility.FacilityController.list
+GET  /facility/search                    controllers.facility.FacilityController.search
+GET  /facility/edit/:facilityId          controllers.facility.FacilityController.edit(facilityId:Long)
+POST /facility/:facilityId               controllers.facility.FacilityController.update(facilityId:Long)
+GET  /facility/add                       controllers.facility.FacilityController.add
+POST /facility                           controllers.facility.FacilityController.insert
+POST /facility/delete/:facilityId        controllers.facility.FacilityController.delete(facilityId:Long)
 
-# 課題用に追加するアクション
-# facilityの編集を行うアクション
-GET  /facility/edit/:facilityId        controllers.facility.FacilityController.edit(facilityId:Long)
-# 上記 /facility/edit/:facilityId でsubmitされたバリデーション済みの値を取ってきて、modelの更新を行う
-POST /facility/:facilityId             controllers.facility.FacilityController.update(facilityId:Long)
-
-# facilityを新規に追加するビューに遷移するアクション
-GET  /facility/add                     controllers.facility.FacilityController.add
-POST /facility                         controllers.facility.FacilityController.insert
-
-# 既存facilityを削除するアクション
-POST /facility/delete/:facilityId      controllers.facility.FacilityController.delete(facilityId:Long)
+# --[ 組織ページ ]----------------------------------------------------------------
+GET  /organization/list                   controllers.organization.OrganizationController.list
+GET  /organization/add                    controllers.organization.OrganizationController.add
+POST /organization                        controllers.organization.OrganizationController.insert
+GET  /organization/edit/:organizationId   controllers.organization.OrganizationController.edit(organizationId:Long)
+POST /organization/:organizationId        controllers.organization.OrganizationController.update(organizationId:Long)
+POST /organization/delete/:organizationId controllers.organization.OrganizationController.delete(organizationId:Long)
 
 # --[ 特集ページ ]--------------------------------------------------------------
 GET  /recruit/intership-for-summer-21  controllers.recruit.InternshipForSummer21Controller.view
