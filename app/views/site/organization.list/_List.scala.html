@@ -36,7 +36,6 @@
    <div class="content__section content">
    @for(organization <- vv.organizations) {
        <article class="facility-list-item">
-           <a href="@controllers.organization.routes.OrganizationController.edit(organization.id.get)">
                <div class="item-panel__wrapper">
                    <header class="facility-item__header">
                        <div class="name">
@@ -62,7 +61,12 @@
                        </div>
                    </section>
                </div>
-           </a>
+           @helper.form(action = controllers.organization.routes.OrganizationController.edit(organization.id.get)){
+               <input type="submit" value="編集">
+               }
+           @helper.form(action = controllers.organization.routes.OrganizationController.detail(organization.id.get)){
+               <input type="submit" value="詳細">
+               }
        </article>
    }
    </div>

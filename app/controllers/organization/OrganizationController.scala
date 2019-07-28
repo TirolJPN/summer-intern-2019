@@ -74,6 +74,24 @@ class OrganizationController @javax.inject.Inject()(
     Redirect(routes.OrganizationController.list())
   }
 
+  /**
+    * 既存組織情報の詳細
+    */
+  def detail(organizationId: Long) = Action.async { implicit request =>
+    for {
+      locSeq <- daoLocation.filterByIds(Location.Region.IS_PREF_ALL)
+      organization <- organizationDao.get(organizationId)
+    } yield {
+      val vv = SiteViewValueOrganization(
+        layout = ViewValuePageLayout(id = request.uri),
+        location = locSeq,
+        organization = organization
+      )
+
+      Ok(views.html.site.organization.detail.Main(vv))
+    }
+  }
+
 
   /**
     * 既存組織情報の編集
