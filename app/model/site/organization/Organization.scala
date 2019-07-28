@@ -5,7 +5,7 @@ import persistence.geo.model.Location
 import persistence.organization.model.Organization
 
 // 単体の組織
-class SiteViewValueOrganization
+case class SiteViewValueOrganization
 (
   layout:      ViewValuePageLayout,
   location:    Seq[Location],

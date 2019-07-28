@@ -46,7 +46,7 @@ object Organization {
   type Id = Long
 
   //  --[ フォームの定義 ]---------------------------------------------------------------
-  val formOrganizationEdit = Form (
+  val formForOrganization = Form (
     mapping(
       "locationId" -> optional(text),
       "chineseName" -> optional(text),

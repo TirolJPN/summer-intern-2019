@@ -48,11 +48,12 @@ class OrganizationDao @javax.inject.Inject() (
        slick
          .filter(_.id === organizationId)
          .map( p => (p.locationId, p.chineseName, p.phoneticName, p.englishName))
-         .update(formValues.locationId.get,
+         .update((
+           formValues.locationId.get,
            formValues.chineseName.get,
            formValues.phoneticName.get,
            formValues.englishName.get,
-         )
+         ))
      }
 
   def insert (RecvData: OrganizationEdit): Future[Organization.Id] = {
