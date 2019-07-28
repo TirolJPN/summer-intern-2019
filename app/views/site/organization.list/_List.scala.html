@@ -36,7 +36,7 @@
    <div class="content__section content">
    @for(organization <- vv.organizations) {
        <article class="facility-list-item">
-           <a href="#">
+           <a href="@controllers.organization.routes.OrganizationController.edit(organization.id.get)">
                <div class="item-panel__wrapper">
                    <header class="facility-item__header">
                        <div class="name">

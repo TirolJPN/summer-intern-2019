@@ -46,7 +46,7 @@ class OrganizationController @javax.inject.Inject()(
       val vv = SiteViewValueOrganization (
         layout = ViewValuePageLayout(id = request.uri),
         location = locSeq,
-        organzation = organization,
+        organization = organization,
       )
       Ok(views.html.site.organization.add.Main(vv, formForOrganization))
     }
@@ -71,6 +71,46 @@ class OrganizationController @javax.inject.Inject()(
         }
       }
     )
+    Redirect(routes.OrganizationController.list())
+  }
+
+
+  /**
+    * 既存組織情報の編集
+    */
+  def edit(organizationId: Long) = Action.async { implicit request =>
+    for {
+      locSeq <- daoLocation.filterByIds(Location.Region.IS_PREF_ALL)
+      organization <- organizationDao.get(organizationId)
+    } yield {
+      val vv = SiteViewValueOrganization(
+        layout = ViewValuePageLayout(id = request.uri),
+        location = locSeq,
+        organization = organization
+      )
+
+      Ok(views.html.site.organization.edit.Main(
+        vv, organizationId,
+        formForOrganization.fill(
+          OrganizationEdit(
+            Option(organization.get.locationId),
+            Option(organization.get.chineseName),
+            Option(organization.get.phoneticName),
+            Option(organization.get.englishName)
+          )
+        )
+      ))
+    }
+  }
+
+  def update(organizationId: Long) = Action {implicit request =>
+    val formValues = formForOrganization.bindFromRequest.get
+    organizationDao.update(organizationId, formValues)
+    Redirect(routes.OrganizationController.list())
+  }
+
+  def delete(organizationId: Long) = Action { implicit request =>
+    organizationDao.delete(organizationId)
     Redirect(routes.OrganizationController.list())
   }
 }

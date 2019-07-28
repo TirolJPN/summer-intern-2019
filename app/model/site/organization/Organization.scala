@@ -9,5 +9,5 @@ case class SiteViewValueOrganization
 (
   layout:      ViewValuePageLayout,
   location:    Seq[Location],
-  organzation: Option[Organization]
+  organization: Option[Organization]
 )
