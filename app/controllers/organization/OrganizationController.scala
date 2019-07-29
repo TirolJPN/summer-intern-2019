@@ -25,11 +25,18 @@ class OrganizationController @javax.inject.Inject()(
     for {
       locSeq <- daoLocation.filterByIds(Location.Region.IS_PREF_ALL)
       organizationSeq <- organizationDao.findAll
+      organizationFacilitiesSeq <- organizationDao.findAllOrganizationFacilities
+
     } yield {
       val vv = SiteViewValueOrganizationList(
         layout = ViewValuePageLayout(id = request.uri),
         location = locSeq,
-        organizations = organizationSeq
+        organizations = organizationSeq,
+        /* organizationFacilitiesの型ははSeq[organizationFacilities]ではなく
+           Seq[(Organization.Id, Int)]であることに注意
+                  →findAllOrganizationFacilitiesがcountを含むqueryのため
+         */
+        organizationFacilities = organizationFacilitiesSeq
       )
       Ok(views.html.site.organization.list.Main(vv))
     }
