@@ -9,8 +9,7 @@ import scala.concurrent.Future
 import slick.jdbc.JdbcProfile
 import play.api.db.slick.DatabaseConfigProvider
 import play.api.db.slick.HasDatabaseConfigProvider
-import persistence.organization.model.{Organization, OrganizationEdit}
-import persistence.organization.model.OrganizationEdit
+import persistence.organization.model.{Organization, OrganizationEdit, OrganizationFacilities}
 
 class OrganizationDao @javax.inject.Inject() (
   val dbConfigProvider: DatabaseConfigProvider
@@ -19,6 +18,7 @@ class OrganizationDao @javax.inject.Inject() (
 
   // --[ リソース定義 ] --------------------------------------------------------
   lazy val slick = TableQuery[OrganizationTable]
+  lazy val slick_o_f = TableQuery[OrganizationFacilitiesTable]
 
   // --[ データ処理定義 ] ------------------------------------------------------
   /**
@@ -34,9 +34,29 @@ class OrganizationDao @javax.inject.Inject() (
   /**
    * organizationを全件取得
    */
-  def findAll: Future[Seq[Organization]] =
+  def findAll =
     db.run {
       slick.result
+
+      /**
+        * 1つのorganizationに紐付くFacilityの件数を追加したい
+        */
+      /*
+      (slick_o_f.groupBy(_.organizationId).map{case (id, group) => (id, group.map(_.result).length)}
+        joinLeft slick on (_._1.value === _.id)
+      )
+        .map{
+          case (o_f, o) => (o_f._1.value, o.result)
+        }.result
+       */
+    }
+  def findAllOrganizationFacilities =
+    db.run{
+      slick_o_f
+        .groupBy(_.organizationId).map{
+        case (s, results) => (s -> results.length)
+      }
+        .result
     }
 
   /**
@@ -98,6 +118,30 @@ class OrganizationDao @javax.inject.Inject() (
       /** The bidirectional mappings : Model => Tuple(table) */
       (v: TableElementType) => Organization.unapply(v).map(_.copy(
         _6 = LocalDateTime.now
+      ))
+    )
+  }
+
+  class OrganizationFacilitiesTable(tag: Tag) extends Table[OrganizationFacilities](tag, "organization_facilities") {
+
+
+    // Table's columns
+    /* @1 */ def id = column[OrganizationFacilities.Id]    ("id", O.PrimaryKey, O.AutoInc)
+    /* @2 */ def organizationId= column[Organization.Id]    ("organization_id")
+    /* @3 */ def facilityId          = column[Facility.Id]         ("facility_id")
+    /* @4 */ def updatedAt     = column[LocalDateTime]  ("updated_at")
+    /* @5 */ def createdAt     = column[LocalDateTime]  ("created_at")
+
+    // The * projection of the table
+    def * = (
+      id.?, organizationId, facilityId,
+      updatedAt, createdAt
+    ) <> (
+      /** The bidirectional mappings : Tuple(table) => Model */
+      (OrganizationFacilities.apply _).tupled,
+      /** The bidirectional mappings : Model => Tuple(table) */
+      (v: TableElementType) => OrganizationFacilities.unapply(v).map(_.copy(
+        _5 = LocalDateTime.now
       ))
     )
   }

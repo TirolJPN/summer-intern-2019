@@ -1,7 +1,5 @@
 package persistence.organization.model
 
-import play.api.data._
-import play.api.data.Forms._
 import java.time.LocalDateTime
 
 import play.api.data._
@@ -25,11 +23,6 @@ case class Organization (
   updatedAt:   LocalDateTime = LocalDateTime.now,  // データ更新日
   createdAt:   LocalDateTime = LocalDateTime.now   // データ作成日
                         )
-
-case class OrganizationFacilities (
-  id:              Organization.Id,             // 紐付けるOrganization id
-  facilityid:      Facility.Id,                 // 紐づけるFacility id
-)
 
 
 case class OrganizationEdit (
