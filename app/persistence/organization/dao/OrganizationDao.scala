@@ -50,14 +50,7 @@ class OrganizationDao @javax.inject.Inject() (
         }.result
        */
     }
-  def findAllOrganizationFacilities =
-    db.run{
-      slick_o_f
-        .groupBy(_.organizationId).map{
-        case (s, results) => (s -> results.length)
-      }
-        .result
-    }
+
 
   /**
     * idをパラメータにして、organizationを一件編集
@@ -122,8 +115,58 @@ class OrganizationDao @javax.inject.Inject() (
     )
   }
 
-  class OrganizationFacilitiesTable(tag: Tag) extends Table[OrganizationFacilities](tag, "organization_facilities") {
+  // --[ データ処理定義 ] ------------------------------------------------------
 
+  /**
+    * group by句を用いて、紐付くFacilitiesが存在するOrganizationの一覧と
+    * 紐付くFacilityの数を返す
+    */
+  def findAllOrganizationFacilities =
+    db.run{
+      slick_o_f
+        .groupBy(_.organizationId).map{
+        case (s, results) => (s -> results.length)
+      }.result
+    }
+
+  /**
+    * Organization.Idを引数に取り、
+    * それに紐付く全てのFacilityを返す
+    */
+
+  def getAllFacilities(id: Organization.Id) =
+    db.run{
+      slick_o_f
+        .filter(_.organizationId === id)
+        .result
+    }
+
+  /**
+    * 紐づくFacilityの追加を行う
+    */
+  def insertOrganizationFacilities(organizationId: Organization.Id, facilityId: Facility.Id) = {
+    val insertData : OrganizationFacilities = OrganizationFacilities(
+      None,
+      organizationId,
+      facilityId,
+    )
+    db.run {
+      slick_o_f returning slick_o_f.map(_.id) += insertData
+    }
+  }
+
+  /**
+    * 紐づくFacilityの削除を行う
+    */
+  def deleteOrganizationFacilities(organizationId: Organization.Id, facilityId: Facility.Id) = {
+    db.run{
+      slick_o_f.
+//        .filter(_.organizationId === organizationId && _.fac)
+        .delete
+    }
+  }
+
+  class OrganizationFacilitiesTable(tag: Tag) extends Table[OrganizationFacilities](tag, "organization_facilities") {
 
     // Table's columns
     /* @1 */ def id = column[OrganizationFacilities.Id]    ("id", O.PrimaryKey, O.AutoInc)
