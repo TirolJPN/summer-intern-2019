@@ -160,8 +160,8 @@ class OrganizationDao @javax.inject.Inject() (
     */
   def deleteOrganizationFacilities(organizationId: Organization.Id, facilityId: Facility.Id) = {
     db.run{
-      slick_o_f.
-//        .filter(_.organizationId === organizationId && _.fac)
+      slick_o_f
+        .filter(row => (row.organizationId === organizationId) && (row.facilityId === facilityId))
         .delete
     }
   }
