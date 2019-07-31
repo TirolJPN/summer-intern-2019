@@ -7,8 +7,10 @@
 @import views.html.helper
 @import model.site.organization.SiteViewValueOrganizationList
 @import play.api.data.Form
-
 @import persistence.organization.model.OrganizationEdit
+@import persistence.organization.model.Organization
+@import persistence.organization.model.OrganizationFacilities
+
 @(vv: SiteViewValueOrganizationList)(implicit messages: play.api.i18n.Messages)
 
 @** 施設検索一覧 *@
@@ -60,7 +62,16 @@
                                <div class="description">
                                    <label class="inline">紐付くFacilityの数:</label>
                                    <p class="inline">
-                                       hoge
+                                       @vv.organizationFacilities.reduce(
+                                           (a,b) =>
+                                               if(a._1.asInstanceOf[Int] == organization.id.get) {
+                                                   a
+                                               }else if(b._1.asInstanceOf[Int] == organization.id.get){
+                                                   b
+                                               }else{
+                                                   (0, 0)
+                                               }
+                                       )._2
                                    </p>
                                </div>
                            </div>

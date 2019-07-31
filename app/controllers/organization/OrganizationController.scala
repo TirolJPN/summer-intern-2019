@@ -38,6 +38,7 @@ class OrganizationController @javax.inject.Inject()(
          */
         organizationFacilities = organizationFacilitiesSeq
       )
+      println(vv.organizationFacilities)
       Ok(views.html.site.organization.list.Main(vv))
     }
   }
