@@ -8,7 +8,7 @@ import persistence.organization.model.OrganizationEdit
 import persistence.organization.model.Organization.formForOrganization
 import persistence.geo.model.Location
 import persistence.geo.dao.LocationDAO
-import model.site.organization.{SiteViewValueOrganization, SiteViewValueOrganizationList}
+import model.site.organization.{SiteViewValueOrganization, SiteViewValueOrganizationList, SiteViewValueOrganizationDetail}
 import model.component.util.ViewValuePageLayout
 import persistence.organizationFacilities.dao.OrganizationFacilitiesDao
 
@@ -56,7 +56,7 @@ class OrganizationController @javax.inject.Inject()(
       val vv = SiteViewValueOrganization (
         layout = ViewValuePageLayout(id = request.uri),
         location = locSeq,
-        organization = organization,
+        organization = organization
       )
       Ok(views.html.site.organization.add.Main(vv, formForOrganization))
     }
@@ -91,13 +91,15 @@ class OrganizationController @javax.inject.Inject()(
     for {
       locSeq <- daoLocation.filterByIds(Location.Region.IS_PREF_ALL)
       organization <- organizationDao.get(organizationId)
+      facilities <- organizationFacilitiesDao.getAllFacilities(organizationId)
     } yield {
-      val vv = SiteViewValueOrganization(
+      val vv = SiteViewValueOrganizationDetail(
         layout = ViewValuePageLayout(id = request.uri),
         location = locSeq,
-        organization = organization
+        organization = organization,
+        facilities = facilities
       )
-
+      println(facilities)
       Ok(views.html.site.organization.detail.Main(vv))
     }
   }
@@ -110,14 +112,12 @@ class OrganizationController @javax.inject.Inject()(
     for {
       locSeq <- daoLocation.filterByIds(Location.Region.IS_PREF_ALL)
       organization <- organizationDao.get(organizationId)
-      facilities <- organizationFacilitiesDao.getAllFacilities(organizationId)
     } yield {
       val vv = SiteViewValueOrganization(
         layout = ViewValuePageLayout(id = request.uri),
         location = locSeq,
         organization = organization,
       )
-      println(facilities)
       Ok(views.html.site.organization.edit.Main(
         vv, organizationId,
         formForOrganization.fill(

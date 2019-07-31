@@ -4,12 +4,12 @@
  * For the full copyright and license information,
  * please view the LICENSE file that was distributed with this source code.
  *@
-@import model.site.organization.SiteViewValueOrganization
+@import model.site.organization.SiteViewValueOrganizationDetail
 @import play.api.data.Form
 
 @** 組織追加 *@
 @import persistence.organization.model.OrganizationEdit
-@(vv: SiteViewValueOrganization)(implicit messages: play.api.i18n.Messages)
+@(vv: SiteViewValueOrganizationDetail)(implicit messages: play.api.i18n.Messages)
 @views.html.common.layout.Default(vv.layout) {
   @views.html.common.layout.ContentLayout(
     id      = "site-facility-list",
