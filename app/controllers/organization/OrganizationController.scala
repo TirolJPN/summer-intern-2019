@@ -10,10 +10,12 @@ import persistence.geo.model.Location
 import persistence.geo.dao.LocationDAO
 import model.site.organization.{SiteViewValueOrganization, SiteViewValueOrganizationList}
 import model.component.util.ViewValuePageLayout
+import persistence.organizationFacilities.dao.OrganizationFacilitiesDao
 
 class OrganizationController @javax.inject.Inject()(
   val organizationDao: OrganizationDao,
   val daoLocation: LocationDAO,
+  val organizationFacilitiesDao: OrganizationFacilitiesDao,
   cc: MessagesControllerComponents
 ) extends AbstractController(cc) with I18nSupport {
   implicit lazy val executionContext = defaultExecutionContext
@@ -25,20 +27,20 @@ class OrganizationController @javax.inject.Inject()(
     for {
       locSeq <- daoLocation.filterByIds(Location.Region.IS_PREF_ALL)
       organizationSeq <- organizationDao.findAll
-      organizationFacilitiesSeq <- organizationDao.findAllOrganizationFacilities
+      organizationFacilitiesSeq <- organizationFacilitiesDao.findAllOrganizationFacilities
 
     } yield {
       val vv = SiteViewValueOrganizationList(
         layout = ViewValuePageLayout(id = request.uri),
         location = locSeq,
         organizations = organizationSeq,
-        /* organizationFacilitiesの型ははSeq[organizationFacilities]ではなく
-           Seq[(Organization.Id, Int)]であることに注意
-                  →findAllOrganizationFacilitiesがcountを含むqueryのため
-         */
+        /**
+          *  organizationFacilitiesの型ははSeq[organizationFacilities]ではなく
+          *  Seq[(Organization.Id, Int)]であることに注意
+          *        →findAllOrganizationFacilitiesがcountを含むqueryのため
+          */
         organizationFacilities = organizationFacilitiesSeq
       )
-      println(vv.organizationFacilities)
       Ok(views.html.site.organization.list.Main(vv))
     }
   }
@@ -108,13 +110,14 @@ class OrganizationController @javax.inject.Inject()(
     for {
       locSeq <- daoLocation.filterByIds(Location.Region.IS_PREF_ALL)
       organization <- organizationDao.get(organizationId)
+      facilities <- organizationFacilitiesDao.getAllFacilities(organizationId)
     } yield {
       val vv = SiteViewValueOrganization(
         layout = ViewValuePageLayout(id = request.uri),
         location = locSeq,
-        organization = organization
+        organization = organization,
       )
-
+      println(facilities)
       Ok(views.html.site.organization.edit.Main(
         vv, organizationId,
         formForOrganization.fill(

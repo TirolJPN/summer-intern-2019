@@ -1,10 +1,9 @@
-package persistence.organization.model
-
+package persistence.organizationFacilities.model
 
 import java.time.LocalDateTime
+
 import persistence.facility.model.Facility
-
-
+import persistence.organization.model.Organization
 
 case class OrganizationFacilities (
   id:              Option[OrganizationFacilities.Id],

@@ -6,7 +6,6 @@ import play.api.data._
 import play.api.data.Forms._
 
 import persistence.geo.model.Location
-import persistence.facility.model.Facility
 
 /*
   Organizationは最低限下記の情報を持ちます。
