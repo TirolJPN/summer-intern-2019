@@ -1,14 +1,11 @@
 package persistence.organization.model
 
-import play.api.data._
-import play.api.data.Forms._
 import java.time.LocalDateTime
 
 import play.api.data._
 import play.api.data.Forms._
 
 import persistence.geo.model.Location
-import persistence.facility.model.Facility
 
 /*
   Organizationは最低限下記の情報を持ちます。
@@ -25,11 +22,6 @@ case class Organization (
   updatedAt:   LocalDateTime = LocalDateTime.now,  // データ更新日
   createdAt:   LocalDateTime = LocalDateTime.now   // データ作成日
                         )
-
-case class OrganizationFacilities (
-  id:              Organization.Id,             // 紐付けるOrganization id
-  facilityid:      Facility.Id,                 // 紐づけるFacility id
-)
 
 
 case class OrganizationEdit (

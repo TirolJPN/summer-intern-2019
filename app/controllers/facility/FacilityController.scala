@@ -124,6 +124,7 @@ class FacilityController @javax.inject.Inject()(
         location   = locSeq,
         facilities = facilitySeq
       )
+      println(facilitySeq)
       Ok(views.html.site.facility.list.Main(vv, formForFacilitySearch))
     }
   }

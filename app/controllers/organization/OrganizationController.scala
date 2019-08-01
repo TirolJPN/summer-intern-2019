@@ -7,13 +7,16 @@ import persistence.organization.dao.OrganizationDao
 import persistence.organization.model.OrganizationEdit
 import persistence.organization.model.Organization.formForOrganization
 import persistence.geo.model.Location
+import persistence.facility.model.Facility
 import persistence.geo.dao.LocationDAO
-import model.site.organization.{SiteViewValueOrganization, SiteViewValueOrganizationList}
+import model.site.organization.{SiteViewValueOrganization, SiteViewValueOrganizationDetail, SiteViewValueOrganizationEdit, SiteViewValueOrganizationList}
 import model.component.util.ViewValuePageLayout
+import persistence.organizationFacilities.dao.OrganizationFacilitiesDao
 
 class OrganizationController @javax.inject.Inject()(
   val organizationDao: OrganizationDao,
   val daoLocation: LocationDAO,
+  val organizationFacilitiesDao: OrganizationFacilitiesDao,
   cc: MessagesControllerComponents
 ) extends AbstractController(cc) with I18nSupport {
   implicit lazy val executionContext = defaultExecutionContext
@@ -25,11 +28,19 @@ class OrganizationController @javax.inject.Inject()(
     for {
       locSeq <- daoLocation.filterByIds(Location.Region.IS_PREF_ALL)
       organizationSeq <- organizationDao.findAll
+      organizationFacilitiesSeq <- organizationFacilitiesDao.findAll
+
     } yield {
       val vv = SiteViewValueOrganizationList(
         layout = ViewValuePageLayout(id = request.uri),
         location = locSeq,
-        organizations = organizationSeq
+        organizations = organizationSeq,
+        /**
+          *  organizationFacilitiesの型ははSeq[organizationFacilities]ではなく
+          *  Seq[(Organization.Id, Int)]であることに注意
+          *        →findAllOrganizationFacilitiesがcountを含むqueryのため
+          */
+        organizationFacilities = organizationFacilitiesSeq
       )
       Ok(views.html.site.organization.list.Main(vv))
     }
@@ -46,7 +57,7 @@ class OrganizationController @javax.inject.Inject()(
       val vv = SiteViewValueOrganization (
         layout = ViewValuePageLayout(id = request.uri),
         location = locSeq,
-        organization = organization,
+        organization = organization
       )
       Ok(views.html.site.organization.add.Main(vv, formForOrganization))
     }
@@ -81,13 +92,15 @@ class OrganizationController @javax.inject.Inject()(
     for {
       locSeq <- daoLocation.filterByIds(Location.Region.IS_PREF_ALL)
       organization <- organizationDao.get(organizationId)
+      facilities <- organizationFacilitiesDao.getRelatedAll(organizationId)
     } yield {
-      val vv = SiteViewValueOrganization(
+      val vv = SiteViewValueOrganizationDetail(
         layout = ViewValuePageLayout(id = request.uri),
         location = locSeq,
-        organization = organization
+        organization = organization,
+        facilities = facilities
       )
-
+      println(facilities)
       Ok(views.html.site.organization.detail.Main(vv))
     }
   }
@@ -100,13 +113,16 @@ class OrganizationController @javax.inject.Inject()(
     for {
       locSeq <- daoLocation.filterByIds(Location.Region.IS_PREF_ALL)
       organization <- organizationDao.get(organizationId)
+      relatedFacilities <- organizationFacilitiesDao.getRelatedAll(organizationId)
+      unrelatedFacilities <- organizationFacilitiesDao.getUnrelatedAll(organizationId)
     } yield {
-      val vv = SiteViewValueOrganization(
+      val vv = SiteViewValueOrganizationEdit(
         layout = ViewValuePageLayout(id = request.uri),
         location = locSeq,
-        organization = organization
+        organization = organization,
+        relatedFacilities = relatedFacilities,
+        unrelatedFacilities = unrelatedFacilities,
       )
-
       Ok(views.html.site.organization.edit.Main(
         vv, organizationId,
         formForOrganization.fill(
@@ -130,5 +146,19 @@ class OrganizationController @javax.inject.Inject()(
   def delete(organizationId: Long) = Action { implicit request =>
     organizationDao.delete(organizationId)
     Redirect(routes.OrganizationController.list())
+  }
+
+  /**
+    * organization - facilities の更新のためのアクション
+    */
+
+  def insertOrganizationFacilities(organizationId: Long, facilityId: Long) = Action { implicit request =>
+    organizationFacilitiesDao.insert(organizationId, facilityId)
+    Redirect(routes.OrganizationController.edit(organizationId))
+  }
+
+  def deleteOrganizationFacilities(organizationId: Long, facilityId: Long) = Action { implicit request =>
+    organizationFacilitiesDao.delete(organizationId, facilityId)
+    Redirect(routes.OrganizationController.edit(organizationId))
   }
 }

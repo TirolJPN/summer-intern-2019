@@ -1,4 +1,4 @@
--- 施設定義 (sample)
+-- 組織定義 (sample)
 --------------
 CREATE TABLE "organization" (
   "id"          INT          NOT NULL AUTO_INCREMENT PRIMARY KEY,
