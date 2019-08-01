@@ -29,7 +29,7 @@ class OrganizationFacilitiesDao @javax.inject.Inject()(
     * group by句を用いて、紐付くFacilitiesが存在するOrganizationの一覧と
     * 紐付くFacilityの数を返す
     */
-  def findAllOrganizationFacilities =
+  def findAll =
     db.run{
       slick
         .groupBy(_.organizationId).map{
@@ -42,7 +42,7 @@ class OrganizationFacilitiesDao @javax.inject.Inject()(
     * それに紐付く全てのFacilityを返す
     */
 
-  def getAllFacilities(id: Organization.Id) =
+  def getRelatedAll(id: Organization.Id) =
     db.run{
       slick_f
         .filter(_.id.in
@@ -55,9 +55,26 @@ class OrganizationFacilitiesDao @javax.inject.Inject()(
     }
 
   /**
+    * Organization.Idを引数に取り、
+    * それに紐づかない全てのFacilityを返す
+    */
+
+  def getUnrelatedAll (id: Organization.Id) =
+    db.run{
+      slick_f
+        .filterNot(_.id.in
+          (slick
+              .filter(_.organizationId === id)
+              .map(p => p.facilityId)
+          )
+        )
+        .result
+    }
+
+  /**
     * 紐づくFacilityの追加を行う
     */
-  def insertOrganizationFacilities(organizationId: Organization.Id, facilityId: Facility.Id) = {
+  def insert(organizationId: Organization.Id, facilityId: Facility.Id) = {
     val insertData : OrganizationFacilities = OrganizationFacilities(
       None,
       organizationId,
@@ -71,7 +88,7 @@ class OrganizationFacilitiesDao @javax.inject.Inject()(
   /**
     * 紐づくFacilityの削除を行う
     */
-  def deleteOrganizationFacilities(organizationId: Organization.Id, facilityId: Facility.Id) = {
+  def delete(organizationId: Organization.Id, facilityId: Facility.Id) = {
     db.run{
       slick
         .filter(row => (row.organizationId === organizationId) && (row.facilityId === facilityId))
