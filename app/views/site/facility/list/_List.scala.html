@@ -9,7 +9,18 @@
 @import play.api.data.Form
 
 @import persistence.facility.model.FacilitySearch
-@(vv: SiteViewValueFacilityList, form: Form[FacilitySearch])(implicit messages: play.api.i18n.Messages)
+@(vv: SiteViewValueFacilityList, form: Form[FacilitySearch], currentPage: Int,  pageMaxLength: Int)(implicit messages: play.api.i18n.Messages)
+
+@bound = @{5}
+@lowbound() = @{
+  ((currentPage.toDouble / bound).floor * bound).toInt
+}
+@highbound() = @{
+  if ((lowbound() + bound) * pageMaxLength >= vv.facilityCount)
+    vv.facilityCount / pageMaxLength + 1
+  else
+    lowbound() + bound
+}
 
 @** 施設検索一覧 *@
 @views.html.common.layout.InnerContent("site-app-new-user-form", "content") {
@@ -20,7 +31,7 @@
 
   @** --[ 検索フォーム ]---------------------------------------------------------- *@
   <div class="content__section form">
-    @helper.form(action = controllers.facility.routes.FacilityController.search) {
+    @helper.form(action = controllers.facility.routes.FacilityController.search(1)) {
 
       @** 都道府県 *@
       <div class="form__section pref inline">
@@ -89,4 +100,49 @@
       </article>
     }
   </div>
+
+    <div class="pagination">
+      <ul>
+        @if(currentPage == 1){
+          <li class="disabled"><a href="#">Previous</a></li>
+        } else {
+          <li><a href="@controllers.facility.routes.FacilityController.list(currentPage-1)">Previous</a></li>
+
+        }
+
+@*        @if(currentPage < bound) {*@
+@*          <li class="disabled"><a href="#">&laquo;</a></li>*@
+@*        } else {*@
+@*          @if(lowbound()-bound <= 0) {*@
+@*            <li><a href="@controllers.facility.routes.FacilityController.list(1)">&laquo;</a></li>*@
+@*          } else {*@
+@*            <li><a href="@controllers.facility.routes.FacilityController.list(lowbound()-bound)">&laquo;</a></li>*@
+@*          }*@
+@*        }*@
+
+        @for(i <- lowbound().max(1) until currentPage) {
+          <li><a href="@controllers.facility.routes.FacilityController.list(i)">@i</a></li>
+        }
+
+        <li class="active"><a href="#">@currentPage</a></li>
+
+        @for(i <- currentPage+1 to highbound()) {
+          <li><a href="@controllers.facility.routes.FacilityController.list(i)">@i</a></li>
+        }
+
+@*        @if(highbound() * pageMaxLength <= vv.facilityCount && highbound() > currentPage && currentPage * pageMaxLength != vv.facilityCount) {*@
+@*          <li><a href="@controllers.facility.routes.FacilityController.list(highbound())">&raquo;</a></li>*@
+@*        } else {*@
+@*          <li class="disabled"><a href="#">&raquo;</a></li>*@
+@*        }*@
+
+        @if(currentPage < highbound()) {
+          <li><a href="@controllers.facility.routes.FacilityController.list(currentPage+1)">Next</a></li>
+        } else {
+          <li class="disabled"><a href="#">Next</a></li>
+
+        }
+      </ul>
+    </div>
+
 }
