@@ -34,9 +34,9 @@ class OrganizationDao @javax.inject.Inject() (
   /**
     * organizationを全件取得
     */
-  def findAll =
+  def findAll(currentPage: Int, pageMaxLength: Int) =
     db.run {
-      slick.result
+      slick.drop(currentPage * pageMaxLength).take(pageMaxLength).result
 
       /**
         * 1つのorganizationに紐付くFacilityの件数を追加したい
@@ -49,6 +49,11 @@ class OrganizationDao @javax.inject.Inject() (
           case (o_f, o) => (o_f._1.value, o.result)
         }.result
        */
+    }
+
+  def getCountFindAll: Future[Int] =
+    db.run {
+      slick.length.result
     }
 
 

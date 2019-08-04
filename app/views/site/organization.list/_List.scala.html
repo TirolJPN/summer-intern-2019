@@ -10,7 +10,18 @@
 @import persistence.organization.model.OrganizationEdit
 @import persistence.organization.model.Organization
 
-@(vv: SiteViewValueOrganizationList)(implicit messages: play.api.i18n.Messages)
+@(vv: SiteViewValueOrganizationList, currentPage:Int, pageMaxLength:Int)(implicit messages: play.api.i18n.Messages)
+
+@bound = @{5}
+@lowbound() = @{
+    ((currentPage.toDouble / bound).floor * bound).toInt
+}
+@highbound() = @{
+    if ((lowbound() + bound) * pageMaxLength >= vv.organizationCount)
+        vv.organizationCount / pageMaxLength + 1
+    else
+        lowbound() + bound
+}
 
 @** 施設検索一覧 *@
 @views.html.common.layout.InnerContent("site-app-new-user-form", "content") {
@@ -87,4 +98,31 @@
    }
    </div>
 
+    <div class="pagination">
+        <ul>
+            @if(currentPage == 1){
+                <li class="disabled"><a href="#">Previous</a></li>
+            } else {
+                <li><a href="@controllers.organization.routes.OrganizationController.list(currentPage-1)">Previous</a></li>
+
+            }
+
+            @for(i <- lowbound().max(1) until currentPage) {
+                <li><a href="@controllers.organization.routes.OrganizationController.list(i)">@i</a></li>
+            }
+
+            <li class="active"><a href="#">@currentPage</a></li>
+
+            @for(i <- currentPage+1 to highbound()) {
+                <li><a href="@controllers.organization.routes.OrganizationController.list(i)">@i</a></li>
+            }
+
+            @if(currentPage < highbound()) {
+                <li><a href="@controllers.organization.routes.OrganizationController.list(currentPage+1)">Next</a></li>
+            } else {
+                <li class="disabled"><a href="#">Next</a></li>
+
+            }
+        </ul>
+    </div>
 }

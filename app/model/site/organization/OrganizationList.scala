@@ -10,5 +10,6 @@ case class SiteViewValueOrganizationList
   layout:      ViewValuePageLayout,
   location:    Seq[Location],
   organizations: Seq[Organization],
+  organizationCount: Int,
   organizationFacilities: Seq[(Organization.Id, Int)]
 )

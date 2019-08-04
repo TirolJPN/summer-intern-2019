@@ -9,8 +9,10 @@ POST  /app/new-user                      controllers.app.NewUserCommitController
 
 
 # --[ 施設ページ ]----------------------------------------------------------------
-GET  /facility/list                      controllers.facility.FacilityController.list
-GET  /facility/search                    controllers.facility.FacilityController.search
+GET  /facility/list                      controllers.facility.FacilityController.list(currentPage:Int=1)
+GET  /facility/list/:currentPage         controllers.facility.FacilityController.list(currentPage:Int)
+GET  /facility/search                    controllers.facility.FacilityController.search(currentPage:Int=1)
+GET  /facility/search/:currentPage       controllers.facility.FacilityController.search(currentPage:Int)
 GET  /facility/edit/:facilityId          controllers.facility.FacilityController.edit(facilityId:Long)
 POST /facility/:facilityId               controllers.facility.FacilityController.update(facilityId:Long)
 GET  /facility/add                       controllers.facility.FacilityController.add
@@ -18,7 +20,8 @@ POST /facility                           controllers.facility.FacilityController
 POST /facility/delete/:facilityId        controllers.facility.FacilityController.delete(facilityId:Long)
 
 # --[ 組織ページ ]----------------------------------------------------------------
-GET  /organization/list                   controllers.organization.OrganizationController.list
+GET  /organization/list                   controllers.organization.OrganizationController.list(currentPage:Int=1)
+GET  /organization/list/:currentPage      controllers.organization.OrganizationController.list(currentPage:Int)
 GET  /organization/add                    controllers.organization.OrganizationController.add
 POST /organization                        controllers.organization.OrganizationController.insert
 GET  /organization/detail/:organizationId controllers.organization.OrganizationController.detail(organizationId:Long)

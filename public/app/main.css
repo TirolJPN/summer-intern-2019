@@ -459,6 +459,22 @@ h1, h2, h3, h4, h5, h6 {
           font-weight: bold;
           margin-right: 5px; }
 
+#site-facility-list .pagination {
+  text-align: center; }
+
+#site-facility-list .pagination ul {
+  display: inline-block; }
+
+#site-facility-list .pagination li {
+  color: black;
+  float: left;
+  padding: 8px 16px;
+  text-decoration: none;
+  list-style-type: none; }
+
+#site-facility-list .active {
+  background-color: #e0e0e0; }
+
 #site-recruit-internship-for-summer-21-main-visual.content {
   height: 660px;
   position: relative;

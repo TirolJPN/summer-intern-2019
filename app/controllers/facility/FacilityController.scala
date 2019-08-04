@@ -24,10 +24,10 @@ import model.component.util.ViewValuePageLayout
 class FacilityController @javax.inject.Inject()(
   val facilityDao: FacilityDAO,
   val daoLocation: LocationDAO,
-  cc: MessagesControllerComponents
+  cc: MessagesControllerComponents,
 ) extends AbstractController(cc) with I18nSupport {
   implicit lazy val executionContext = defaultExecutionContext
-
+  val pageMaxLength: Int = 10;         // 1ページあたりの最大表示数
   /**
     * 施設編集ページ
     */
@@ -63,7 +63,7 @@ class FacilityController @javax.inject.Inject()(
   def update(facilityId: Long) = Action { implicit request =>
     val formValues = formForFacility.bindFromRequest.get
     facilityDao.update(facilityId, formValues)
-    Redirect(routes.FacilityController.list())
+    Redirect(routes.FacilityController.list(0))
   }
 
 
@@ -88,7 +88,7 @@ class FacilityController @javax.inject.Inject()(
           locSeq <- daoLocation.filterByIds(Location.Region.IS_PREF_ALL)
         } yield {
 //          BadRequest(views.html.site.app.new_user.Main(vv, errors))
-          Redirect(routes.FacilityController.list())
+          Redirect(routes.FacilityController.list(0))
         }
       },
       facility   => {
@@ -101,12 +101,12 @@ class FacilityController @javax.inject.Inject()(
       }
     )
     // facilityDao.insert(formValues)
-    Redirect(routes.FacilityController.list())
+    Redirect(routes.FacilityController.list(0))
   }
 
   def delete(facilityId: Long) = Action { implicit request =>
     facilityDao.delete(facilityId)
-    Redirect(routes.FacilityController.list())
+    Redirect(routes.FacilityController.list(0))
   }
 
 
@@ -114,57 +114,62 @@ class FacilityController @javax.inject.Inject()(
   /**
     * 施設一覧ページ
     */
-  def list = Action.async { implicit request =>
+  def list(currentPage: Int) = Action.async { implicit request =>
     for {
       locSeq      <- daoLocation.filterByIds(Location.Region.IS_PREF_ALL)
-      facilitySeq <- facilityDao.findAll
+      facilitySeq <- facilityDao.findAll(currentPage-1, pageMaxLength)
+      facilityCount <- facilityDao.getCountFindAll
     } yield {
       val vv = SiteViewValueFacilityList(
         layout     = ViewValuePageLayout(id = request.uri),
         location   = locSeq,
-        facilities = facilitySeq
+        facilities = facilitySeq,
+        facilityCount = facilityCount
       )
-      println(facilitySeq)
-      Ok(views.html.site.facility.list.Main(vv, formForFacilitySearch))
+      Ok(views.html.site.facility.list.Main(vv, formForFacilitySearch, currentPage, pageMaxLength))
     }
   }
 
   /**
    * 施設検索
    */
-  def search = Action.async { implicit request =>
+  def search(currentPage: Int) = Action.async { implicit request =>
     formForFacilitySearch.bindFromRequest.fold(
       errors => {
        for {
           locSeq      <- daoLocation.filterByIds(Location.Region.IS_PREF_ALL)
-          facilitySeq <- facilityDao.findAll
+          facilitySeq <- facilityDao.findAll(currentPage-1, pageMaxLength)
+          facilityCount <- facilityDao.getCountFindAll
         } yield {
           val vv = SiteViewValueFacilityList(
             layout     = ViewValuePageLayout(id = request.uri),
             location   = locSeq,
-            facilities = facilitySeq
+            facilities = facilitySeq,
+            facilityCount = facilityCount
           )
-          BadRequest(views.html.site.facility.list.Main(vv, errors))
+          BadRequest(views.html.site.facility.list.Main(vv, errors, currentPage, pageMaxLength))
         }
       },
       form   => {
         for {
           locSeq      <- daoLocation.filterByIds(Location.Region.IS_PREF_ALL)
+          facilityCount <- facilityDao.getCountFindAll
           facilitySeq <- form.locationIdOpt match {
             case Some(id) =>
               for {
                 locations   <- daoLocation.filterByPrefId(id)
-                facilitySeq <- facilityDao.filterByLocationIds(locations.map(_.id))
+                facilitySeq <- facilityDao.filterByLocationIds(locations.map(_.id)),
               } yield facilitySeq
-            case None     => facilityDao.findAll
+            case None     => facilityDao.findAll(currentPage, pageMaxLength)
           }
         } yield {
           val vv = SiteViewValueFacilityList(
             layout     = ViewValuePageLayout(id = request.uri),
             location   = locSeq,
-            facilities = facilitySeq
+            facilities = facilitySeq,
+            facilityCount = facilityCount
           )
-          Ok(views.html.site.facility.list.Main(vv, formForFacilitySearch.fill(form)))
+          Ok(views.html.site.facility.list.Main(vv, formForFacilitySearch.fill(form), currentPage, pageMaxLength))
         }
       }
     )

@@ -9,7 +9,7 @@
 
 @** 施設一覧/検索 *@
 @import persistence.facility.model.FacilitySearch
-@(vv: SiteViewValueFacilityList, form: Form[FacilitySearch])(implicit messages: play.api.i18n.Messages)
+@(vv: SiteViewValueFacilityList, form: Form[FacilitySearch], currentPage: Int,  pageMaxLength: Int)(implicit messages: play.api.i18n.Messages)
 @views.html.common.layout.Default(vv.layout) {
   @views.html.common.layout.ContentLayout(
     id      = "site-facility-list",
@@ -19,5 +19,5 @@
 
 @** テンプレート: コンテンツ *@
 @tplContent = {
-  @views.html.site.facility.list._List(vv, form)
+  @views.html.site.facility.list._List(vv, form, currentPage, pageMaxLength)
 }

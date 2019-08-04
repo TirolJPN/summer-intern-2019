@@ -43,9 +43,14 @@ class FacilityDAO @javax.inject.Inject()(
   /**
    * 施設を全件取得する
    */
-  def findAll: Future[Seq[Facility]] =
+  def findAll(currentPage: Int, pageMaxLength: Int): Future[Seq[Facility]] =
     db.run {
-      slick.result
+      slick.drop(currentPage * pageMaxLength).take(pageMaxLength).result
+    }
+
+  def getCountFindAll: Future[Int] =
+    db.run {
+      slick.length.result
     }
 
   /**

@@ -16,7 +16,8 @@ import persistence.facility.model.Facility
 case class SiteViewValueFacilityList(
   layout:   ViewValuePageLayout,
   location: Seq[Location],
-  facilities: Seq[Facility]
+  facilities: Seq[Facility],
+  facilityCount: Int
 )
 
 //
