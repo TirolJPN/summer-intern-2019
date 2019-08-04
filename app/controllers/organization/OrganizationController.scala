@@ -20,21 +20,23 @@ class OrganizationController @javax.inject.Inject()(
   cc: MessagesControllerComponents
 ) extends AbstractController(cc) with I18nSupport {
   implicit lazy val executionContext = defaultExecutionContext
+  val pageMaxLength: Int = 10;         // 1ページあたりの最大表示数
 
   /**
     * 組織一覧ページ
     */
-  def list = Action.async { implicit request =>
+  def list(currentPage: Int) = Action.async { implicit request =>
     for {
       locSeq <- daoLocation.filterByIds(Location.Region.IS_PREF_ALL)
-      organizationSeq <- organizationDao.findAll
+      organizationSeq <- organizationDao.findAll(currentPage-1, pageMaxLength)
       organizationFacilitiesSeq <- organizationFacilitiesDao.findAll
-
+      organizationCount <- organizationDao.getCountFindAll
     } yield {
       val vv = SiteViewValueOrganizationList(
         layout = ViewValuePageLayout(id = request.uri),
         location = locSeq,
         organizations = organizationSeq,
+        organizationCount = organizationCount,
         /**
           *  organizationFacilitiesの型ははSeq[organizationFacilities]ではなく
           *  Seq[(Organization.Id, Int)]であることに注意
@@ -42,7 +44,7 @@ class OrganizationController @javax.inject.Inject()(
           */
         organizationFacilities = organizationFacilitiesSeq
       )
-      Ok(views.html.site.organization.list.Main(vv))
+      Ok(views.html.site.organization.list.Main(vv, currentPage, pageMaxLength))
     }
   }
 
@@ -70,7 +72,7 @@ class OrganizationController @javax.inject.Inject()(
           locSeq <- daoLocation.filterByIds(Location.Region.IS_PREF_ALL)
         } yield {
           //          BadRequest(views.html.site.app.new_user.Main(vv, errors))
-          Redirect(routes.OrganizationController.list())
+          Redirect(routes.OrganizationController.list(1))
         }
       },
       organization   => {
@@ -82,7 +84,7 @@ class OrganizationController @javax.inject.Inject()(
         }
       }
     )
-    Redirect(routes.OrganizationController.list())
+    Redirect(routes.OrganizationController.list(1))
   }
 
   /**
@@ -140,12 +142,12 @@ class OrganizationController @javax.inject.Inject()(
   def update(organizationId: Long) = Action {implicit request =>
     val formValues = formForOrganization.bindFromRequest.get
     organizationDao.update(organizationId, formValues)
-    Redirect(routes.OrganizationController.list())
+    Redirect(routes.OrganizationController.list(1))
   }
 
   def delete(organizationId: Long) = Action { implicit request =>
     organizationDao.delete(organizationId)
-    Redirect(routes.OrganizationController.list())
+    Redirect(routes.OrganizationController.list(1))
   }
 
   /**

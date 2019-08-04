@@ -101,7 +101,7 @@
     }
   </div>
 
-    <div class="pagination">
+  <div class="pagination">
       <ul>
         @if(currentPage == 1){
           <li class="disabled"><a href="#">Previous</a></li>
@@ -109,16 +109,6 @@
           <li><a href="@controllers.facility.routes.FacilityController.list(currentPage-1)">Previous</a></li>
 
         }
-
-@*        @if(currentPage < bound) {*@
-@*          <li class="disabled"><a href="#">&laquo;</a></li>*@
-@*        } else {*@
-@*          @if(lowbound()-bound <= 0) {*@
-@*            <li><a href="@controllers.facility.routes.FacilityController.list(1)">&laquo;</a></li>*@
-@*          } else {*@
-@*            <li><a href="@controllers.facility.routes.FacilityController.list(lowbound()-bound)">&laquo;</a></li>*@
-@*          }*@
-@*        }*@
 
         @for(i <- lowbound().max(1) until currentPage) {
           <li><a href="@controllers.facility.routes.FacilityController.list(i)">@i</a></li>
@@ -130,12 +120,6 @@
           <li><a href="@controllers.facility.routes.FacilityController.list(i)">@i</a></li>
         }
 
-@*        @if(highbound() * pageMaxLength <= vv.facilityCount && highbound() > currentPage && currentPage * pageMaxLength != vv.facilityCount) {*@
-@*          <li><a href="@controllers.facility.routes.FacilityController.list(highbound())">&raquo;</a></li>*@
-@*        } else {*@
-@*          <li class="disabled"><a href="#">&raquo;</a></li>*@
-@*        }*@
-
         @if(currentPage < highbound()) {
           <li><a href="@controllers.facility.routes.FacilityController.list(currentPage+1)">Next</a></li>
         } else {
@@ -143,6 +127,6 @@
 
         }
       </ul>
-    </div>
+  </div>
 
 }
